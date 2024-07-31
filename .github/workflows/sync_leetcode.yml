@@ -11,6 +11,7 @@ jobs:
 
     steps:
       - name: Sync
+        id: leetcode_sync
         uses: joshcai/leetcode-sync@v1.7
         with:
           github-token: ${{ github.token }}
@@ -19,3 +20,12 @@ jobs:
           destination-folder: my-folder
           verbose: true
           commit-header: "[LeetCode Sync]"
+        continue-on-error: true
+
+      - name: Debug LeetCode Response
+        if: failure()
+        run: |
+          cat /home/runner/work/_actions/joshcai/leetcode-sync/v1.7/dist/index.js
+          # Log response to see the structure
+          RESPONSE=$(cat /home/runner/work/_actions/joshcai/leetcode-sync/v1.7/dist/index.js | grep "response.data.data.submissionList")
+          echo "LeetCode API Response: $RESPONSE"
